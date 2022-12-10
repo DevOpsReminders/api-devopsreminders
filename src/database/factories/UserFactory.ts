@@ -1,15 +1,15 @@
-import {DeepPartial} from 'typeorm';
+import { DeepPartial } from 'typeorm';
 import BaseFactory from '@database/core/BaseFactory';
-import {UserEntity} from '@entities/UserEntity';
+import { UserEntity } from '@entities/UserEntity';
 import EntityFactory from '@database/core/FactoryInterface';
-import {faker, SexType} from "@faker-js/faker";
+import { faker, SexType } from '@faker-js/faker';
 
 export default class UserFactory extends BaseFactory<UserEntity> implements EntityFactory<UserEntity> {
     build(data: Partial<UserEntity>): UserEntity {
         const gender = faker.name.sex() as SexType;
         const firstName = faker.name.firstName(gender);
         const lastName = faker.name.lastName();
-        const name = `${firstName} ${lastName}`
+        const name = `${firstName} ${lastName}`;
         const email = faker.helpers.unique(faker.internet.email, [firstName, lastName]).toLowerCase();
         const avatar = faker.image.avatar();
 

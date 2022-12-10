@@ -1,5 +1,5 @@
 import { createServer } from '@server/index';
-import {dbConnect} from "@database/connect";
+import { dbConnect } from '@database/connect';
 
 (async () => {
     await dbConnect();

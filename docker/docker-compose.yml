@@ -27,7 +27,7 @@ services:
         container_name: ${APP_PREFIX}-mailhog
         image: mailhog/mailhog:v1.0.1
         restart: on-failure
-        command: [ '-storage=maildir', '-maildir-path=/maildir' ]
+        command: ['-storage=maildir', '-maildir-path=/maildir']
         volumes:
             - ./data/mailhog:/maildir:delegated
         ports:

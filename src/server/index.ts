@@ -1,20 +1,20 @@
 import express from 'express';
 import compression from 'compression';
 import logger from 'morgan';
-import {attachControllers} from '@decorators/express';
-import https, {ServerOptions} from 'https';
+import { attachControllers } from '@decorators/express';
+import https, { ServerOptions } from 'https';
 import fs from 'fs';
 import appConfig from '@config/index';
 import createError from 'http-errors';
-import {ServerErrorMiddleware} from '@server/middleware/ServerErrorMiddleware';
-import {IndexController} from "@controllers/IndexController";
+import { ServerErrorMiddleware } from '@server/middleware/ServerErrorMiddleware';
+import { IndexController } from '@controllers/IndexController';
 
 const server = express();
 
 server.use(compression());
 server.use(logger('combined'));
 server.use(express.json());
-server.use(express.urlencoded({extended: true}));
+server.use(express.urlencoded({ extended: true }));
 attachControllers(server, [IndexController]);
 server.use(function (req, res, next) {
     next(createError(404));

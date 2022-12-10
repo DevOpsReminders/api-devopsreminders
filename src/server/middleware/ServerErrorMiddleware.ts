@@ -3,13 +3,6 @@ import { NextFunction, Request, Response } from 'express';
 import { isHttpError } from 'http-errors';
 import { isString } from 'lodash';
 
-// @TODO remove template render
-const getReferrer = (request: Request): string => {
-    const referrer = request.header('referrer');
-    if (!referrer) return '/';
-    const urlParts = new URL(referrer);
-    return request.hostname === urlParts.hostname ? `${urlParts.pathname}${urlParts.search}` : referrer;
-};
 export class ServerErrorMiddleware implements ErrorMiddleware {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public use(error: Error, request: Request, response: Response, next: NextFunction) {

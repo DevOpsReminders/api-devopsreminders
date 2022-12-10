@@ -1,8 +1,8 @@
-import databaseConfig from "@config/databaseConfig";
-import serverConfig from "@config/serverConfig";
+import databaseConfig from '@config/databaseConfig';
+import serverConfig from '@config/serverConfig';
 
 const appConfig = {
-    database:databaseConfig,
+    database: databaseConfig,
     server: serverConfig,
 };
 export default appConfig;

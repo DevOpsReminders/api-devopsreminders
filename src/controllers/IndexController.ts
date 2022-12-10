@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Response } from '@decorators/express';
+import { Controller, Get, Response } from '@decorators/express';
 import * as e from 'express';
 
 @Controller('/')
