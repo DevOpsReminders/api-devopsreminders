@@ -1,0 +1,71 @@
+{
+    "include": [
+        "src",
+        "tests"
+    ],
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
+    "compilerOptions": {
+        "outDir": "./build",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "importHelpers": true,
+        "baseUrl": "src",
+        "paths": {
+            "@config/*": [
+                "config/*"
+            ],
+            "@controllers/*": [
+                "controllers/*"
+            ],
+            "@database/*": [
+                "database/*"
+            ],
+            "@entities/*": [
+                "entities/*"
+            ],
+            "@server/*": [
+                "server/*"
+            ],
+            "@services/*": [
+                "services/*"
+            ],
+            "@utils/*": [
+                "utils/*"
+            ],
+            "@views/*": [
+                "views/*"
+            ],
+            "@testHelpers/*": [
+                "../tests/helpers/*"
+            ]
+        },
+        "typeRoots": [
+            "src/types",
+            "node_modules/@types"
+        ],
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "noImplicitAny": true,
+        "lib": [
+            "es5",
+            "es6"
+        ],
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node"
+    },
+    "ts-node": {
+        "transpileOnly": true,
+        "compilerOptions": {
+            "module": "commonjs",
+            "target": "esnext"
+        }
+    }
+}

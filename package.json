@@ -6,5 +6,17 @@
   "repository": "git@github.com:DevOpsReminders/api-devopsreminders.git",
   "author": "Angel S. Moreno <angel.moreno@dotdashmdp.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "engines": {
+    "node": "v16.18"
+  },
+  "dependencies": {
+    "tsconfig-paths": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.13",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4"
+  }
 }
