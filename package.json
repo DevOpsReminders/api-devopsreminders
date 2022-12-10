@@ -18,7 +18,11 @@
         "format:fix": "prettier --write .",
         "test": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/**/*.spec.ts'",
         "test:unit": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/unit/**/*.spec.ts'",
-        "test:coverage": "nyc npm run test"
+        "test:coverage": "nyc npm run test",
+        "docker": "docker-compose -p apidevrem --env-file .env --file ./docker/docker-compose.yml",
+        "docker:start": "yarn docker up --remove-orphans",
+        "docker:restart": "yarn docker restart",
+        "docker:stop": "yarn docker stop"
     },
     "engines": {
         "node": "v16.18"
