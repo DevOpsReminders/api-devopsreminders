@@ -11,7 +11,10 @@
         "lint": "yarn eslint . --ext js,ts,json --cache",
         "lint:fix": "yarn eslint . --ext js,ts,json --fix --cache",
         "format": "prettier --check .",
-        "format:fix": "prettier --write ."
+        "format:fix": "prettier --write .",
+        "test": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/**/*.spec.ts'",
+        "test:unit": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/unit/**/*.spec.ts'",
+        "test:coverage": "nyc npm run test"
     },
     "engines": {
         "node": "v16.18"
@@ -20,13 +23,19 @@
         "tsconfig-paths": "^4.1.1"
     },
     "devDependencies": {
+        "@istanbuljs/nyc-config-typescript": "^1.0.2",
+        "@types/chai": "^4.3.4",
+        "@types/mocha": "^10.0.1",
         "@types/node": "^18.11.13",
         "@typescript-eslint/eslint-plugin": "^5.46.0",
         "@typescript-eslint/parser": "^5.46.0",
+        "chai": "^4.3.7",
         "eslint": "^8.29.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-prettier": "^4.2.1",
+        "mocha": "^10.1.0",
+        "nyc": "^15.1.0",
         "prettier": "^2.8.1",
         "ts-node": "^10.9.1",
         "tslib": "^2.4.1",
