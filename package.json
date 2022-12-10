@@ -28,7 +28,8 @@
         "db:migration:generate": "yarn typeorm migration:generate -d ./src/database/data-source.ts -p ./src/database/migrations/diff",
         "db:migration:run": "yarn typeorm migration:run -d ./src/database/data-source.ts",
         "db:migration:revert": "yarn typeorm migration:revert -d ./src/database/data-source.ts",
-        "db:seed:run": "ts-node -r tsconfig-paths/register src/database/seedRunner.ts"
+        "db:seed:run": "ts-node -r tsconfig-paths/register src/database/seedRunner.ts",
+        "prepare": "husky install"
     },
     "engines": {
         "node": "v16.18"
@@ -73,6 +74,8 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-prettier": "^4.2.1",
+        "husky": "^8.0.0",
+        "lint-staged": "^13.1.0",
         "mocha": "^10.1.0",
         "nodemon": "^2.0.20",
         "nyc": "^15.1.0",
@@ -82,5 +85,8 @@
         "ts-node": "^10.9.1",
         "tslib": "^2.4.1",
         "typescript": "^4.9.4"
+    },
+    "lint-staged": {
+        "*.{js,ts, json}": "eslint"
     }
 }
