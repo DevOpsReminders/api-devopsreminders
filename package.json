@@ -1,0 +1,10 @@
+{
+  "name": "api-devopsreminders",
+  "version": "0.0.0",
+  "description": "The DevOpsReminders API service",
+  "main": "build/app.js",
+  "repository": "git@github.com:DevOpsReminders/api-devopsreminders.git",
+  "author": "Angel S. Moreno <angel.moreno@dotdashmdp.com>",
+  "license": "MIT",
+  "private": false
+}
