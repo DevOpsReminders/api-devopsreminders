@@ -35,9 +35,10 @@ const createHttpsServer = (port: number, cb: (baseUrl: string) => void) => {
     httpServer.listen(port);
 };
 
-export const createServer = (cb: (baseUrl: string) => void, secure = false) => {
+export const createServer = (cb: (baseUrl: string) => void) => {
     const PORT = appConfig.server.port;
-    if (secure) {
+    const USE_HTTPS = appConfig.server.useHttps;
+    if (USE_HTTPS) {
         createHttpsServer(PORT, cb);
     } else {
         createHttpServer(PORT, cb);
