@@ -1,7 +1,7 @@
 import { Application, Request } from 'express';
 import { UserEntity } from '@entities/UserEntity';
 import passport from 'passport';
-import jwtStrategy from '@auth/adapters/jwtAdapter';
+import { buildJwtStrategy } from '@auth/adapters/jwtAdapter';
 
 export type CheckAuthCallback = (user?: UserEntity, error?: Error) => void;
 
@@ -18,7 +18,7 @@ export const checkJwt = (req: Request, callback: CheckAuthCallback) => {
 };
 
 export const applyAuth = (app: Application) => {
-    passport.use(jwtStrategy);
+    passport.use(buildJwtStrategy());
 
     app.use((req, res, next) => {
         req.passport = passport;
