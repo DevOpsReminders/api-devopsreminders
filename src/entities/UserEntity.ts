@@ -20,7 +20,7 @@ export class UserEntity extends AppBaseEntity {
     @Index('userEmail', { unique: true })
     email!: string;
 
-    @Column('varchar')
+    @Column('varchar', { nullable: true, default: null })
     @Exclude()
     password!: string;
 
