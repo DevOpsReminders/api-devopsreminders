@@ -1,4 +1,6 @@
 import Env from '@utils/Env';
+import { IndexController } from '@controllers/IndexController';
+import { AuthController } from '@controllers/AuthController';
 
 const normalizeBaseUrl = (useHttps: boolean): URL => {
     const hostname = Env.asString('HOST_NAME');
@@ -20,6 +22,7 @@ const serverConfig = {
     port: Number(url.port),
     useHttps,
     baseUrl: String(url),
+    controllers: [IndexController, AuthController],
 };
 
 export default serverConfig;

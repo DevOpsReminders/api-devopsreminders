@@ -7,7 +7,7 @@ import fs from 'fs';
 import appConfig from '@config/index';
 import createError from 'http-errors';
 import { ServerErrorMiddleware } from '@server/middleware/ServerErrorMiddleware';
-import { IndexController } from '@controllers/IndexController';
+import { applyAuth } from '@auth/index';
 
 const server = express();
 
@@ -15,7 +15,8 @@ server.use(compression());
 server.use(logger('combined'));
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-attachControllers(server, [IndexController]);
+applyAuth(server);
+attachControllers(server, appConfig.server.controllers);
 server.use(function (req, res, next) {
     next(createError(404));
 });
