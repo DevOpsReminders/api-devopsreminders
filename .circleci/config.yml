@@ -16,6 +16,8 @@ jobs:
       - checkout
       - run: yarn install
   tests:
+    docker:
+      - image: cimg/node:16.18
     steps:
       - run: yarn lint
       - run: yarn test:unit
