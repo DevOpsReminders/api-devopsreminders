@@ -1,6 +1,6 @@
 import { Entity, Column, Index } from 'typeorm';
 import AppBaseEntity from '@database/core/AppBaseEntity';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import jwt from 'jsonwebtoken';
 import appConfig from '@config/index';
@@ -28,11 +28,7 @@ export class UserEntity extends AppBaseEntity {
     avatar?: string;
 
     encryptPassword() {
-        this.password = bcrypt.hashSync(this.password, 16);
-    }
-
-    isValidPassword(password: string) {
-        return bcrypt.compareSync(password, this.password);
+        this.password = bcrypt.hashSync(this.password, 4);
     }
 
     toAuthPayload(): AuthPayload {

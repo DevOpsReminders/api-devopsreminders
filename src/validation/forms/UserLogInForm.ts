@@ -1,16 +1,12 @@
-import { Expose } from 'class-transformer';
-import { IsDefined, IsEmail, IsString, Length } from 'class-validator';
+import UserForm from '@validation/forms/UserForm';
+import { UserEntity } from '@entities/UserEntity';
+import { IsValidCredential } from '@validation/constraints/IsValidCredential';
 
-export default class UserLogInForm {
-    @Expose()
-    @IsDefined()
-    @IsString()
-    @IsEmail()
-    email!: string;
-
-    @Expose()
-    @IsDefined()
-    @IsString()
-    @Length(8, 32)
+export default class UserLogInForm extends UserForm {
+    @IsValidCredential<UserEntity>({
+        entity: UserEntity,
+        usernameField: 'email',
+        passwordField: 'password',
+    })
     password!: string;
 }

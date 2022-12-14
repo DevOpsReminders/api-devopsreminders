@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import appConfig from '@config/index';
 
-export let AppDataSource: DataSource;
+export let AppDataSource: DataSource | undefined = undefined;
 
 export const dbConnect = async () => {
     if (!AppDataSource) {

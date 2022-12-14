@@ -31,6 +31,7 @@ export default class ObjectValidator<Form extends object = object, Data = object
     async validate() {
         const errors = await validate(this.formInstance, {
             validationError: { target: false },
+            skipMissingProperties: true,
         });
         this.errorCollection = new ValidationErrorCollection(errors);
         this.isValid = errors.length === 0;

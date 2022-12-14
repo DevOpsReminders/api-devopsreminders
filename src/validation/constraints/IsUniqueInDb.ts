@@ -9,6 +9,9 @@ type IsUniqueInDbValidationOptions<Entity extends AppBaseEntity = AppBaseEntity>
     field: keyof Entity;
 };
 
+export const IsUniqueInDbErrorMessage = (property: string, value: string | number) =>
+    `The ${property} ${value} already exists`;
+
 export const IsUniqueInDb = <Entity extends AppBaseEntity = AppBaseEntity>(
     isUniqueInDbValidationOptions: IsUniqueInDbValidationOptions<Entity>,
     validationOptions?: ValidationOptions,
@@ -22,16 +25,19 @@ export const IsUniqueInDb = <Entity extends AppBaseEntity = AppBaseEntity>(
             name: 'isUniqueInDb',
             validator: {
                 async validate(value: string | number): Promise<boolean> {
+                    if (!value) return false;
                     const { entity, field } = isUniqueInDbValidationOptions;
                     const ds = await dbConnect();
-                    const countOptions = {
+                    const where = {
                         [field]: value,
-                    };
-                    const count = await ds.manager.countBy(entity, countOptions as FindOptionsWhere<Entity>);
-                    return count === 0;
+                    } as FindOptionsWhere<Entity>;
+                    const exists = await ds.manager.exists(entity, {
+                        where,
+                    });
+                    return !exists;
                 },
                 defaultMessage({ property, value }: ValidationArguments): string {
-                    return `The ${property} ${value} already exists`;
+                    return IsUniqueInDbErrorMessage(property, value);
                 },
             },
         });

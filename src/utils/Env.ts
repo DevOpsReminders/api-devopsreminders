@@ -29,6 +29,10 @@ export class EnvClass {
     isDev() {
         return this.data.NODE_ENV === 'development';
     }
+
+    isTesting() {
+        return this.data.NODE_ENV === 'testing';
+    }
 }
 
 const myEnv = dotenv.config();

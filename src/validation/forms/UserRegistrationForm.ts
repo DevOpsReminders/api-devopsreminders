@@ -3,9 +3,9 @@ import { IsDefined, IsOptional, IsString, Length } from 'class-validator';
 import { IsUniqueInDb } from '@validation/constraints/IsUniqueInDb';
 import { IsImageUrl } from '@validation/constraints/IsImageUrl';
 import { UserEntity } from '@entities/UserEntity';
-import UserLogInForm from '@validation/forms/UserLogInForm';
+import UserForm from '@validation/forms/UserForm';
 
-export default class UserRegistrationForm extends UserLogInForm {
+export default class UserRegistrationForm extends UserForm {
     @Expose()
     @IsDefined()
     @IsString()

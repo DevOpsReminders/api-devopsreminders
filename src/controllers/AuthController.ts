@@ -18,7 +18,6 @@ export class AuthController {
             res.status(200).json(user.toAuthPayload());
         } else {
             res.status(400).json({
-                body: req.body,
                 data: validation.formInstance,
                 errors: validation.errorCollection.errors,
             });
@@ -28,20 +27,13 @@ export class AuthController {
     @Post('/email/login')
     async login(@Request() req: e.Request, @Response() res: e.Response) {
         const validation = await ObjectValidator.validate(req.body, UserLogInForm);
-        const { email, password } = validation.formInstance;
-        let passwordMatches = false;
-        let user: UserEntity | null = null;
-
         if (validation.isValid) {
-            user = await UserEntity.findOneBy({ email });
-            passwordMatches = user ? user.isValidPassword(password) : false;
-        }
-
-        if (validation.isValid && passwordMatches && user) {
+            const user = await UserEntity.findOneByOrFail({
+                email: validation.formInstance.email,
+            });
             res.status(200).json(user.toAuthPayload());
         } else {
             res.status(400).json({
-                body: req.body,
                 data: validation.formInstance,
                 errors: validation.errorCollection.errors,
             });

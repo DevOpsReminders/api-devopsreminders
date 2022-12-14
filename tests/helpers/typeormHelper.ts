@@ -1,21 +1,51 @@
 import 'reflect-metadata';
-import { DataSource } from 'typeorm';
-import appConfig from '@config/index';
 import UserFactory from '@database/factories/UserFactory';
+import { ObjectLiteral } from 'typeorm/common/ObjectLiteral';
+import { EntityTarget } from 'typeorm/common/EntityTarget';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
+import { expect } from 'chai';
+import { AppDataSource, dbConnect } from '@database/connect';
+import { DataSource } from 'typeorm';
 
-const datasource = new DataSource(appConfig.database);
-const connect = async () => (datasource.isInitialized ? datasource : datasource.initialize());
-const close = async () => (datasource.isInitialized ? datasource.destroy() : false);
+const connect = () => dbConnect();
+const close = async () => (AppDataSource?.isInitialized ? AppDataSource.destroy() : false);
 
-const factories = {
-    user: new UserFactory(datasource.manager),
+const getFactories = async () => {
+    const ds = await dbConnect();
+    return {
+        user: new UserFactory(ds.manager),
+    };
+};
+
+const expectDataToExistInDb = async <Entity extends ObjectLiteral>(
+    obj: FindOptionsWhere<Entity>,
+    entityClass: EntityTarget<Entity>,
+    message = 'data does not exist in database',
+) => {
+    const exists = await AppDataSource?.manager.exists(entityClass, obj);
+    expect(exists, message).to.be.true;
+};
+
+const expectConnectionToBeClosed = () => {
+    expect(AppDataSource).to.satisfy((conn: DataSource | undefined) => {
+        return typeof conn === 'undefined' || conn?.isInitialized === false;
+    });
+};
+
+const expectConnectionToBeInitialized = () => {
+    expect(AppDataSource).to.satisfy((conn: DataSource | undefined) => {
+        return !!conn && conn.isInitialized;
+    });
 };
 
 const typeormHelper = {
-    datasource,
+    AppDataSource,
     connect,
     close,
-    factories,
+    getFactories,
+    expectDataToExistInDb,
+    expectConnectionToBeClosed,
+    expectConnectionToBeInitialized,
 };
 
 export default typeormHelper;
