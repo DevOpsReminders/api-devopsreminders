@@ -7,15 +7,21 @@ import fs from 'fs';
 import appConfig from '@config/index';
 import createError from 'http-errors';
 import { ServerErrorMiddleware } from '@server/middleware/ServerErrorMiddleware';
-import { IndexController } from '@controllers/IndexController';
+import { applyAuth } from '@auth/index';
+import Env from '@utils/Env';
 
 const server = express();
 
 server.use(compression());
-server.use(logger('combined'));
+if (Env.isTesting()) {
+    server.use(logger('tiny'));
+} else {
+    server.use(logger('combined'));
+}
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-attachControllers(server, [IndexController]);
+applyAuth(server);
+attachControllers(server, appConfig.server.controllers);
 server.use(function (req, res, next) {
     next(createError(404));
 });
@@ -35,9 +41,10 @@ const createHttpsServer = (port: number, cb: (baseUrl: string) => void) => {
     httpServer.listen(port);
 };
 
-export const createServer = (cb: (baseUrl: string) => void, secure = false) => {
+export const createServer = (cb: (baseUrl: string) => void) => {
     const PORT = appConfig.server.port;
-    if (secure) {
+    const USE_HTTPS = appConfig.server.useHttps;
+    if (USE_HTTPS) {
         createHttpsServer(PORT, cb);
     } else {
         createHttpServer(PORT, cb);

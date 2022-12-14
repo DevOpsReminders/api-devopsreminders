@@ -9,6 +9,7 @@
         "importHelpers": true,
         "baseUrl": "src",
         "paths": {
+            "@auth/*": ["auth/*"],
             "@config/*": ["config/*"],
             "@controllers/*": ["controllers/*"],
             "@database/*": ["database/*"],
@@ -16,6 +17,7 @@
             "@server/*": ["server/*"],
             "@services/*": ["services/*"],
             "@utils/*": ["utils/*"],
+            "@validation/*": ["validation/*"],
             "@views/*": ["views/*"],
             "@testHelpers/*": ["../tests/helpers/*"]
         },

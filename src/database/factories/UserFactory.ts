@@ -12,11 +12,12 @@ export default class UserFactory extends BaseFactory<UserEntity> implements Enti
         const name = `${firstName} ${lastName}`;
         const email = faker.helpers.unique(faker.internet.email, [firstName, lastName]).toLowerCase();
         const avatar = faker.image.avatar();
-
+        const password = faker.internet.password(16);
         const partial: DeepPartial<UserEntity> = {
             name,
             email,
             avatar,
+            password,
             ...data,
         };
 

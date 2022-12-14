@@ -7,17 +7,17 @@ describe('TypeOrmConnection', () => {
     beforeEach(async () => await typeormHelper.close());
     context('connecting to db', () => {
         it('creates a connection', async () => {
-            expect(typeormHelper.datasource.isInitialized).to.be.false;
+            typeormHelper.expectConnectionToBeClosed();
             await typeormHelper.connect();
-            expect(typeormHelper.datasource.isInitialized).to.be.true;
+            typeormHelper.expectConnectionToBeInitialized();
         });
 
         it('closes a connection', async () => {
-            expect(typeormHelper.datasource.isInitialized).to.be.false;
+            typeormHelper.expectConnectionToBeClosed();
             await typeormHelper.connect();
-            expect(typeormHelper.datasource.isInitialized).to.be.true;
+            typeormHelper.expectConnectionToBeInitialized();
             await typeormHelper.close();
-            expect(typeormHelper.datasource.isInitialized).to.be.false;
+            typeormHelper.expectConnectionToBeClosed();
         });
     });
 
@@ -25,7 +25,8 @@ describe('TypeOrmConnection', () => {
         it('can create mock entities', async () => {
             await typeormHelper.connect();
             const mockUserEmail = `testUser.${Date.now()}@example.com`;
-            await typeormHelper.factories.user.create({
+            const factories = await typeormHelper.getFactories();
+            await factories.user.create({
                 email: mockUserEmail,
             });
             const results = await UserEntity.findOneBy({

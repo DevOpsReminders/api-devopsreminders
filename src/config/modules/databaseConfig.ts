@@ -2,11 +2,11 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import path from 'path';
 import Env from '@utils/Env';
 import CakePhpNamingStrategy from '@database/core/CakePhpNamingStrategy';
-import { UserEntity } from '@entities/UserEntity';
+import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
 
-const databaseDir = path.join(__dirname, '..', 'database');
-
-const databaseConfig: MysqlConnectionOptions & { url: string } = {
+const databaseDir = path.join(__dirname, '..', '..', 'database');
+type DatabaseConfig = (SqliteConnectionOptions | MysqlConnectionOptions) & { url: string };
+const databaseConfig: DatabaseConfig = {
     type: 'mariadb',
     connectorPackage: 'mysql2',
     supportBigNumbers: true,
@@ -15,7 +15,7 @@ const databaseConfig: MysqlConnectionOptions & { url: string } = {
     url: Env.asString('DATABASE_URI'),
     synchronize: false,
     logging: Env.asBoolean('DATABASE_LOGGING'),
-    entities: [UserEntity],
+    entities: [`${databaseDir}/../entities/**/*.{js,ts}`],
     subscribers: [`${databaseDir}/subscribers/*.{js,ts}`],
     migrations: [`${databaseDir}/migrations/*.{js,ts}`],
     namingStrategy: new CakePhpNamingStrategy(),
