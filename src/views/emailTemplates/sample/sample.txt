@@ -1,0 +1,8 @@
+Simple Transactional Email
+
+<%= name %>
+
+<a href="http://htmlemail.io" target="_blank">Call To Action</a>
+ 
+ 
+ 

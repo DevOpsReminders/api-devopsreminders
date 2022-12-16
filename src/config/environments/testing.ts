@@ -1,5 +1,9 @@
 import { DeepPartial } from 'typeorm';
 import modules, { AppConfig } from '@config/modules';
+import path from 'path';
+
+const ROOT_DIR = path.join(__dirname, '..', '..', '..');
+const templatesPath = path.join(ROOT_DIR, 'tests', 'fixtures', 'emailTemplates');
 
 const config: DeepPartial<AppConfig> = {
     server: {
@@ -16,6 +20,9 @@ const config: DeepPartial<AppConfig> = {
         logging: false,
         poolSize: undefined,
         flags: undefined,
+    },
+    email: {
+        templatesPath,
     },
 };
 
