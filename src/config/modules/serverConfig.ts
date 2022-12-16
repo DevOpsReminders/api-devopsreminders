@@ -3,12 +3,12 @@ import { IndexController } from '@controllers/IndexController';
 import { AuthController } from '@controllers/AuthController';
 
 const normalizeBaseUrl = (useHttps: boolean): URL => {
-    const hostname = Env.asString('HOST_NAME');
-    const port = Env.asNumber('PORT');
+    const hostname = Env.asString('HOST_NAME', 'localhost');
+    const port = Env.asNumber('PORT', 5000);
 
     const url = new URL(`${useHttps ? 'https' : 'http'}://${hostname}:${port}`);
-    url.hostname = Env.asString('HOST_NAME');
-    url.port = Env.asString('PORT');
+    url.hostname = hostname;
+    url.port = String(port);
     url.protocol = useHttps ? 'https' : 'http';
 
     return url;
