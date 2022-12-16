@@ -1,10 +1,11 @@
-import { Controller, Post, Request, Response, All } from '@decorators/express';
+import { Controller, Post, Request, Response, All, Get } from '@decorators/express';
 import * as e from 'express';
 import { UserEntity } from '@entities/UserEntity';
 import ObjectValidator from '@validation/ObjectValidator';
 import UserRegistrationForm from '@validation/forms/UserRegistrationForm';
 import UserLogInForm from '@validation/forms/UserLogInForm';
 import AuthRestrictMiddleware from '@server/middleware/AuthRestrictMiddleware';
+import EmailConfirmationService from '@services/EmailConfirmationService';
 
 @Controller('/auth')
 export class AuthController {
@@ -38,6 +39,13 @@ export class AuthController {
                 errors: validation.errorCollection.errors,
             });
         }
+    }
+
+    @Get('/email/confirm/:confirmationCode')
+    async confirm(@Request() req: e.Request, @Response() res: e.Response) {
+        const { confirmationCode } = req.params;
+        const result = await EmailConfirmationService.verifyEmail(confirmationCode);
+        res.status(200).json({ confirmationCode, result });
     }
 
     @All('/status', [AuthRestrictMiddleware])

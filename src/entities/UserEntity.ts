@@ -20,6 +20,9 @@ export class UserEntity extends AppBaseEntity {
     @Index('userEmail', { unique: true })
     email!: string;
 
+    @Column('boolean', { nullable: false, default: false })
+    emailConfirmed!: boolean;
+
     @Column('varchar', { nullable: true, default: null })
     @Exclude()
     password!: string;
@@ -34,6 +37,7 @@ export class UserEntity extends AppBaseEntity {
     toAuthPayload(): AuthPayload {
         const token = jwt.sign(
             {
+                id: this.id,
                 name: this.name,
             },
             appConfig.auth.jwtSecret,

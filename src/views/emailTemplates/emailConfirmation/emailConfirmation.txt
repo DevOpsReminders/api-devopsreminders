@@ -1,0 +1,7 @@
+Email Confirmation
+
+Hello <%= name %>
+
+Thank you for signing up to DevOpsReminders. Please confirm your email by clicking on the following link
+
+<%= baseUrl %>/auth/email/confirm/<%= confirmationCode %>
