@@ -5,25 +5,39 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  setup:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
     docker:
       - image: cimg/node:16.18
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
       - run: yarn install
-  tests:
+      - run: yarn build
+  linters:
     docker:
       - image: cimg/node:16.18
     steps:
+      - checkout
+      - run: yarn install
       - run: yarn lint
+  unit-tests:
+    docker:
+      - image: cimg/node:16.18
+    steps:
+      - checkout
+      - run: yarn install
       - run: yarn test:unit
+  e2e-tests:
+    docker:
+      - image: cimg/node:16.18
+    steps:
+      - checkout
+      - run: yarn install
       - run: yarn test:e2e
+
 workflows:
-  say-hello-workflow:
+  test-all:
     jobs:
-      - setup
-      - tests
+      - build
+      - linters
+      - unit-tests
+      - e2e-tests
