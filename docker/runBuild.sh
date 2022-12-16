@@ -1,0 +1,1 @@
+docker build . -t angelxmoreno/api-devopsreminders-0.0.0
