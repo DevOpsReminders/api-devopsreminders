@@ -23,7 +23,6 @@ export default class MailTemplateService {
     }
 
     public async templateExists(templateName: EmailTemplateName, type: TemplateExt) {
-        console.log(this.templateFullPath(templateName, type));
         return fileExists(this.templateFullPath(templateName, type));
     }
 
