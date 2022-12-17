@@ -45,7 +45,6 @@ describe('registration', function () {
 
         context('when the email already exists', () => {
             it('returns email already exists errors', async function () {
-                this.timeout(5000);
                 const factories = await typeormHelper.getFactories();
                 const existingUser = await factories.user.create({});
                 await typeormHelper.expectDataToExistInDb(
@@ -74,7 +73,6 @@ describe('registration', function () {
 
         context('when the data is valid', () => {
             it('creates a user', async function () {
-                this.timeout(5000);
                 sandbox.stub(EmailConfirmationService, 'getInstance').returns(stubs.emailConfirmationService(sandbox));
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});
