@@ -5,7 +5,6 @@ import typeormHelper from '@testHelpers/typeormHelper';
 import { IsUniqueInDbErrorMessage } from '@validation/constraints/IsUniqueInDb';
 import { UserEntity } from '@entities/UserEntity';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
-import { expectBodyToBeValidAuthResponse } from '@testHelpers/expectBodyToBeValidAuthResponse';
 
 describe('registration', function () {
     before(async () => await typeormHelper.connect());
@@ -58,13 +57,16 @@ describe('registration', function () {
         });
 
         context('when the data is valid', () => {
-            it('returns user and jwt', async function () {
-                this.timeout(5000);
+            it('returns creates a user', async function () {
+                this.timeout(35 * 1000);
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});
                 const { status, body } = await supertest(server).post(uri).send(newUser);
                 expect(status).to.equal(200);
-                expectBodyToBeValidAuthResponse(body, newUser);
+                expect(body).to.deep.include({
+                    status: 'userCreated',
+                    message: 'email confirmation sent',
+                });
             });
         });
     });

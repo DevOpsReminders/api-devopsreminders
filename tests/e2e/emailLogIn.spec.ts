@@ -16,7 +16,9 @@ describe('log in', function () {
             it('returns user and jwt', async function () {
                 this.timeout(8000);
                 const factories = await typeormHelper.getFactories();
-                const existingUser = await factories.user.build({});
+                const existingUser = await factories.user.build({
+                    emailConfirmed: true,
+                });
                 const email = existingUser.email;
                 const password = existingUser.password;
                 existingUser.encryptPassword();
