@@ -2,17 +2,28 @@ import ejs, { AsyncTemplateFunction, Options, TemplateFunction } from 'ejs';
 import fileExists from '@utils/fileExists';
 import fs from 'fs/promises';
 import { EmailConfig, EmailTemplateName } from '@config/modules/emailsConfig';
+import appConfig from '@config/index';
 
 type CompiledTemplate = AsyncTemplateFunction | TemplateFunction;
 type TemplateExt = 'html' | 'txt';
 
 export default class MailTemplateService {
+    static instance?: MailTemplateService;
+
     config: EmailConfig;
     compiledTemplates: Map<string, CompiledTemplate | false> = new Map();
 
     compileOptions: Options = {
         async: true,
     };
+
+    static getInstance(config?: EmailConfig): MailTemplateService {
+        if (!this.instance || !!config) {
+            this.instance = new MailTemplateService(config || appConfig.email);
+        }
+
+        return this.instance;
+    }
 
     constructor(config: EmailConfig) {
         this.config = config;

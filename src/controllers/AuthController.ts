@@ -1,10 +1,12 @@
-import { Controller, Post, Request, Response, All } from '@decorators/express';
+import { All, Controller, Get, Post, Request, Response } from '@decorators/express';
 import * as e from 'express';
 import { UserEntity } from '@entities/UserEntity';
 import ObjectValidator from '@validation/ObjectValidator';
 import UserRegistrationForm from '@validation/forms/UserRegistrationForm';
 import UserLogInForm from '@validation/forms/UserLogInForm';
 import AuthRestrictMiddleware from '@server/middleware/AuthRestrictMiddleware';
+import EmailConfirmationService from '@services/EmailConfirmationService';
+import buildValidationError from '@validation/core/buildValidationError';
 
 @Controller('/auth')
 export class AuthController {
@@ -15,7 +17,11 @@ export class AuthController {
             const user = UserEntity.create(validation.formInstance as UserEntity);
             user.encryptPassword();
             await user.save();
-            res.status(200).json(user.toAuthPayload());
+            await EmailConfirmationService.getInstance().sendEmail(user);
+            res.status(200).json({
+                status: 'userCreated',
+                message: 'email confirmation sent',
+            });
         } else {
             res.status(400).json({
                 data: validation.formInstance,
@@ -31,13 +37,31 @@ export class AuthController {
             const user = await UserEntity.findOneByOrFail({
                 email: validation.formInstance.email,
             });
-            res.status(200).json(user.toAuthPayload());
+            if (user.emailConfirmed) {
+                res.status(200).json(user.toAuthPayload());
+            } else {
+                res.status(400).json({
+                    data: validation.formInstance,
+                    errors: [
+                        buildValidationError(validation.formInstance.email, 'email', {
+                            emailConfirmed: 'email is not confirmed',
+                        }),
+                    ],
+                });
+            }
         } else {
             res.status(400).json({
                 data: validation.formInstance,
                 errors: validation.errorCollection.errors,
             });
         }
+    }
+
+    @Get('/email/confirm/:confirmationCode')
+    async confirm(@Request() req: e.Request, @Response() res: e.Response) {
+        const { confirmationCode } = req.params;
+        const result = EmailConfirmationService.getInstance().verifyEmail(confirmationCode);
+        res.status(200).json({ confirmationCode, result });
     }
 
     @All('/status', [AuthRestrictMiddleware])

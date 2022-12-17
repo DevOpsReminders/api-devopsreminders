@@ -1,0 +1,3 @@
+emailConfirmation
+<%= name %>
+<%= baseUrl %>/auth/email/confirm/<%= confirmationCode %>

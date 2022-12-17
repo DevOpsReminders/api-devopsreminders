@@ -1,6 +1,7 @@
 import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
 import { EmailConfig, EmailTemplateName } from '@config/modules/emailsConfig';
 import MailTemplateService from '@services/MailTemplateService';
+import appConfig from '@config/index';
 
 export type MailResponse = {
     messageId: string;
@@ -16,9 +17,18 @@ export type TemplateMailResponse = {
     text: string | undefined;
 };
 export default class MailerService {
+    static instance?: MailerService;
     config: EmailConfig;
     transporter?: Transporter;
     templateService: MailTemplateService;
+
+    static getInstance(config?: EmailConfig): MailerService {
+        if (!this.instance || !!config) {
+            this.instance = new MailerService(config || appConfig.email);
+        }
+
+        return this.instance;
+    }
 
     constructor(config: EmailConfig) {
         this.config = config;
