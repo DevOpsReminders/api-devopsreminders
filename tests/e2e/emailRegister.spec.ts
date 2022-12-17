@@ -57,13 +57,13 @@ describe('registration', function () {
         });
 
         context('when the data is valid', () => {
-            it('returns creates a user', async function () {
+            it('creates a user', async function () {
                 this.timeout(35 * 1000);
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});
                 const { status, body } = await supertest(server).post(uri).send(newUser);
                 expect(status).to.equal(200);
-                expect(body).to.deep.include({
+                expect(body, JSON.stringify(body)).to.deep.include({
                     status: 'userCreated',
                     message: 'email confirmation sent',
                 });
