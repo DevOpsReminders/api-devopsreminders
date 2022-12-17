@@ -5,10 +5,26 @@ import typeormHelper from '@testHelpers/typeormHelper';
 import { IsUniqueInDbErrorMessage } from '@validation/constraints/IsUniqueInDb';
 import { UserEntity } from '@entities/UserEntity';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
+import sinon from 'sinon';
+import EmailConfirmationService from '@services/EmailConfirmationService';
+import stubs from '@testHelpers/stubs';
 
 describe('registration', function () {
+    const sandbox = sinon.createSandbox();
+
+    before(async () => {
+        await typeormHelper.connect();
+    });
+    after(async () => {
+        await typeormHelper.close();
+        sandbox.restore();
+    });
+
     before(async () => await typeormHelper.connect());
-    after(async () => await typeormHelper.close());
+    after(async () => {
+        await typeormHelper.close();
+        sandbox.restore();
+    });
 
     const uri = '/auth/email/register';
     describe(`POST ${uri}`, () => {
@@ -58,7 +74,8 @@ describe('registration', function () {
 
         context('when the data is valid', () => {
             it('creates a user', async function () {
-                this.timeout(35 * 1000);
+                this.timeout(5000);
+                sandbox.stub(EmailConfirmationService, 'getInstance').returns(stubs.emailConfirmationService(sandbox));
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});
                 const { status, body } = await supertest(server).post(uri).send(newUser);

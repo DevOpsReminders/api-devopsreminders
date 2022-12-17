@@ -15,7 +15,10 @@ describe('EmailConfirmationService', async function () {
     before(async () => {
         await typeormHelper.connect();
     });
-    after(async () => typeormHelper.close());
+    after(async () => {
+        await typeormHelper.close();
+        sandbox.restore();
+    });
     const emailTemplate: EmailTemplateName = 'emailConfirmation';
     const mailer = stubs.mailerService(sandbox);
     const serviceOptions: EmailConfirmationServiceOptions = {
