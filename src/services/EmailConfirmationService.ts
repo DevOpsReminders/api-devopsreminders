@@ -1,15 +1,71 @@
 import { UserEntity } from '@entities/UserEntity';
-import { EmailTemplateName } from '@config/modules/emailsConfig';
+import { EmailConfig, EmailTemplateName } from '@config/modules/emailsConfig';
 import MailerService, { TemplateMailResponse } from '@services/MailService';
 import appConfig from '@config/index';
 import jwt from 'jsonwebtoken';
+import { Address } from 'nodemailer/lib/mailer';
+
+type ClassOptions = {
+    from?: Address | string;
+    subject?: string;
+    emailTemplate?: EmailTemplateName;
+    mailer?: MailerService;
+    emailConfig?: EmailConfig;
+};
+type ClassOptionsWithMailer = ClassOptions & { mailer: MailerService; emailConfig?: undefined };
+type ClassOptionsWithEmailConfig = ClassOptions & { emailConfig: EmailConfig; mailer?: undefined };
+
+export type EmailConfirmationServiceOptions = ClassOptionsWithMailer | ClassOptionsWithEmailConfig;
 
 export default class EmailConfirmationService {
-    static from = 'devopsreminders@gmail.com';
-    static subject = 'DevOpsReminders email confirmation';
-    static emailTemplate: EmailTemplateName = 'emailConfirmation';
+    static instance?: EmailConfirmationService;
+    mailer: MailerService;
+    from: Address | string;
+    subject: string;
+    emailTemplate: EmailTemplateName;
 
-    static async verifyEmail(confirmationCode: string) {
+    fromDefault = 'devopsreminders@gmail.com';
+    subjectDefault = 'DevOpsReminders email confirmation';
+    emailTemplateDefault: EmailTemplateName = 'emailConfirmation';
+
+    static getInstance(config?: EmailConfirmationServiceOptions): EmailConfirmationService {
+        if (!this.instance || !!config) {
+            this.instance = new EmailConfirmationService(config || { mailer: MailerService.getInstance() });
+        }
+
+        return this.instance;
+    }
+
+    constructor(options: EmailConfirmationServiceOptions) {
+        const { from, subject, emailTemplate, emailConfig, mailer } = options;
+        if (!mailer && !emailConfig) {
+            throw new Error(`EmailConfirmationService requires a "mailer" or "emailConfig"`);
+        }
+        this.from = from || this.fromDefault;
+        this.subject = subject || this.subjectDefault;
+        this.emailTemplate = emailTemplate || this.emailTemplateDefault;
+        this.mailer = mailer || new MailerService(emailConfig);
+    }
+
+    async sendEmail(user: UserEntity): Promise<TemplateMailResponse> {
+        const replacements = {
+            name: user.name,
+            baseUrl: appConfig.server.baseUrl.replace(/\/$/, ''),
+            confirmationCode: this.createConfirmationCode(user),
+        };
+
+        return await this.mailer.sendTemplateMail(
+            {
+                to: user.email,
+                from: this.from,
+                subject: this.subject,
+            },
+            this.emailTemplate,
+            replacements,
+        );
+    }
+
+    async verifyEmail(confirmationCode: string) {
         try {
             const { id, email } = jwt.decode(confirmationCode) as { id: string | undefined; email: string | undefined };
             if (!id || !email) return false;
@@ -24,25 +80,7 @@ export default class EmailConfirmationService {
         }
     }
 
-    static async sendEmail(user: UserEntity): Promise<TemplateMailResponse> {
-        const mailer = new MailerService(appConfig.email);
-        const replacements = {
-            name: user.name,
-            baseUrl: appConfig.server.baseUrl.replace(/\/$/, ''),
-            confirmationCode: this.createConfirmationCode(user),
-        };
-        return await mailer.sendTemplateMail(
-            {
-                to: user.email,
-                from: this.from,
-                subject: this.subject,
-            },
-            this.emailTemplate,
-            replacements,
-        );
-    }
-
-    protected static createConfirmationCode(user: UserEntity) {
+    createConfirmationCode(user: UserEntity) {
         return jwt.sign(
             {
                 id: user.id,

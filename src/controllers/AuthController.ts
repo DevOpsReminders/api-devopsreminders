@@ -44,7 +44,7 @@ export class AuthController {
     @Get('/email/confirm/:confirmationCode')
     async confirm(@Request() req: e.Request, @Response() res: e.Response) {
         const { confirmationCode } = req.params;
-        const result = await EmailConfirmationService.verifyEmail(confirmationCode);
+        const result = EmailConfirmationService.getInstance().verifyEmail(confirmationCode);
         res.status(200).json({ confirmationCode, result });
     }
 
