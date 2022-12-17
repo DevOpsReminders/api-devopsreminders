@@ -62,7 +62,8 @@ describe('registration', function () {
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});
                 const { status, body } = await supertest(server).post(uri).send(newUser);
-                expect(status).to.equal(200);
+
+                expect(status, JSON.stringify({ status, body })).to.equal(200);
                 expect(body, JSON.stringify(body)).to.deep.include({
                     status: 'userCreated',
                     message: 'email confirmation sent',
