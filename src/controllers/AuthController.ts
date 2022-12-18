@@ -4,7 +4,7 @@ import { UserEntity } from '@entities/UserEntity';
 import UserRegistrationForm from '@validation/forms/UserRegistrationForm';
 import UserLogInForm from '@validation/forms/UserLogInForm';
 import AuthRestrictMiddleware from '@server/middleware/AuthRestrictMiddleware';
-import EmailConfirmationService from '@services/EmailConfirmationService';
+import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 import buildValidationError from '@validation/core/buildValidationError';
 import ProcessRequestForm from '@validation/ProcessRequestForm';
 

@@ -12,55 +12,59 @@ type ClassOptions = {
     mailer?: MailerService;
     emailConfig?: EmailConfig;
 };
+
 type ClassOptionsWithMailer = ClassOptions & { mailer: MailerService; emailConfig?: undefined };
 type ClassOptionsWithEmailConfig = ClassOptions & { emailConfig: EmailConfig; mailer?: undefined };
+type Replacer = (user: UserEntity) => Record<string, string> | Promise<Record<string, string>>;
+type VerifyCallback = (user: UserEntity) => boolean | Promise<boolean>;
+export type BaseTokenVerifierOptions = ClassOptionsWithMailer | ClassOptionsWithEmailConfig;
 
-export type EmailConfirmationServiceOptions = ClassOptionsWithMailer | ClassOptionsWithEmailConfig;
-
-export default class EmailConfirmationService {
-    static instance?: EmailConfirmationService;
+export default abstract class BaseTokenVerifier {
     mailer: MailerService;
     from: Address | string;
-    subject: string;
-    emailTemplate: EmailTemplateName;
+    subject?: string;
+    emailTemplate?: EmailTemplateName;
+    abstract replacer: Replacer;
+    abstract verifyCallback: VerifyCallback;
 
     fromDefault = 'devopsreminders@gmail.com';
-    subjectDefault = 'DevOpsReminders email confirmation';
-    emailTemplateDefault: EmailTemplateName = 'emailConfirmation';
+    abstract subjectDefault: string;
+    abstract emailTemplateDefault: EmailTemplateName;
 
-    static getInstance(config?: EmailConfirmationServiceOptions): EmailConfirmationService {
-        if (!this.instance || !!config) {
-            this.instance = new EmailConfirmationService(config || { mailer: MailerService.getInstance() });
-        }
-
-        return this.instance;
-    }
-
-    constructor(options: EmailConfirmationServiceOptions) {
-        const { from, subject, emailTemplate, emailConfig, mailer } = options;
+    constructor(options: BaseTokenVerifierOptions) {
+        const { subject, emailTemplate, from, emailConfig, mailer } = options;
         if (!mailer && !emailConfig) {
-            throw new Error(`EmailConfirmationService requires a "mailer" or "emailConfig"`);
+            throw new Error(`${this.constructor.name} requires a "mailer" or "emailConfig"`);
         }
+        this.subject = subject;
+        this.emailTemplate = emailTemplate;
+
         this.from = from || this.fromDefault;
-        this.subject = subject || this.subjectDefault;
-        this.emailTemplate = emailTemplate || this.emailTemplateDefault;
         this.mailer = mailer || new MailerService(emailConfig);
     }
 
+    getSubject(): string {
+        return this.subject || this.subjectDefault;
+    }
+
+    getEmailTemplate(): EmailTemplateName {
+        return this.emailTemplate || this.emailTemplateDefault;
+    }
+
+    getBaseUrl(): string {
+        return appConfig.server.baseUrl.replace(/\/$/, '');
+    }
+
     async sendEmail(user: UserEntity): Promise<TemplateMailResponse> {
-        const replacements = {
-            name: user.name,
-            baseUrl: appConfig.server.baseUrl.replace(/\/$/, ''),
-            confirmationCode: this.createConfirmationCode(user),
-        };
+        const replacements = await this.replacer(user);
 
         return await this.mailer.sendTemplateMail(
             {
                 to: user.email,
                 from: this.from,
-                subject: this.subject,
+                subject: this.getSubject(),
             },
-            this.emailTemplate,
+            this.getEmailTemplate(),
             replacements,
         );
     }
@@ -72,9 +76,8 @@ export default class EmailConfirmationService {
             const user = await UserEntity.findOneBy({ id: Number(id), email, emailConfirmed: false });
             if (!user) return false;
             jwt.verify(confirmationCode, appConfig.auth.jwtSecret + email);
-            user.emailConfirmed = true;
-            await user.save();
-            return true;
+
+            return await this.verifyCallback(user);
         } catch (error) {
             return false;
         }

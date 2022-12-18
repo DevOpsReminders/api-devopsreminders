@@ -1,4 +1,6 @@
-import EmailConfirmationService, { EmailConfirmationServiceOptions } from '@services/EmailConfirmationService';
+import EmailConfirmationService, {
+    EmailConfirmationServiceOptions,
+} from '@services/TokenVerifiers/EmailConfirmationService';
 import sinon from 'sinon';
 import stubs from '@testHelpers/stubs';
 import typeormHelper from '@testHelpers/typeormHelper';

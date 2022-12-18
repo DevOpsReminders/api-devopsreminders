@@ -6,7 +6,7 @@ import { IsUniqueInDbErrorMessage } from '@validation/constraints/IsUniqueInDb';
 import { UserEntity } from '@entities/UserEntity';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
 import sinon from 'sinon';
-import EmailConfirmationService from '@services/EmailConfirmationService';
+import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 import stubs from '@testHelpers/stubs';
 
 describe('registration', function () {

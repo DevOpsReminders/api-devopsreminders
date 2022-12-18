@@ -3,7 +3,7 @@ import stubTransport from 'nodemailer-stub-transport';
 import MailerService from '@services/MailService';
 import appConfig from '@config/index';
 import { SinonSandbox } from 'sinon';
-import EmailConfirmationService from '@services/EmailConfirmationService';
+import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 
 const stubs = {
     mailerService: (sandbox: SinonSandbox): MailerService => {
