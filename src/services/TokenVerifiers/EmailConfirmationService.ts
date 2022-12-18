@@ -1,17 +1,18 @@
 import { UserEntity } from '@entities/UserEntity';
 import { EmailTemplateName } from '@config/modules/emailsConfig';
 import BaseTokenVerifier, { BaseTokenVerifierOptions } from '@services/TokenVerifiers/BaseTokenVerifier';
+import Env from '@utils/Env';
 import MailerService from '@services/MailService';
 
 export default class EmailConfirmationService extends BaseTokenVerifier {
     static instance?: EmailConfirmationService;
 
-    emailTemplateDefault: EmailTemplateName = 'emailConfirmation';
-    subjectDefault = 'DevOpsReminders email confirmation';
+    emailTemplate: EmailTemplateName = 'emailConfirmation';
+    subject = 'DevOpsReminders email confirmation';
 
     replacer = (user: UserEntity): Record<string, string> => ({
         name: user.name,
-        baseUrl: this.getBaseUrl(),
+        baseUrl: Env.getBaseUrl(),
         confirmationCode: this.createConfirmationCode(user),
     });
 

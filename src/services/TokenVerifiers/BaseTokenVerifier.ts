@@ -5,54 +5,27 @@ import appConfig from '@config/index';
 import jwt from 'jsonwebtoken';
 import { Address } from 'nodemailer/lib/mailer';
 
-type ClassOptions = {
-    from?: Address | string;
-    subject?: string;
-    emailTemplate?: EmailTemplateName;
-    mailer?: MailerService;
-    emailConfig?: EmailConfig;
-};
-
-type ClassOptionsWithMailer = ClassOptions & { mailer: MailerService; emailConfig?: undefined };
-type ClassOptionsWithEmailConfig = ClassOptions & { emailConfig: EmailConfig; mailer?: undefined };
+type ClassOptionsWithMailer = { mailer: MailerService; emailConfig?: undefined };
+type ClassOptionsWithEmailConfig = { emailConfig: EmailConfig; mailer?: undefined };
 type Replacer = (user: UserEntity) => Record<string, string> | Promise<Record<string, string>>;
 type VerifyCallback = (user: UserEntity) => boolean | Promise<boolean>;
 export type BaseTokenVerifierOptions = ClassOptionsWithMailer | ClassOptionsWithEmailConfig;
 
 export default abstract class BaseTokenVerifier {
     mailer: MailerService;
-    from: Address | string;
-    subject?: string;
-    emailTemplate?: EmailTemplateName;
+    from: Address | string = 'devopsreminders@gmail.com';
+
+    abstract subject: string;
+    abstract emailTemplate: EmailTemplateName;
     abstract replacer: Replacer;
     abstract verifyCallback: VerifyCallback;
 
-    fromDefault = 'devopsreminders@gmail.com';
-    abstract subjectDefault: string;
-    abstract emailTemplateDefault: EmailTemplateName;
-
     constructor(options: BaseTokenVerifierOptions) {
-        const { subject, emailTemplate, from, emailConfig, mailer } = options;
+        const { emailConfig, mailer } = options;
         if (!mailer && !emailConfig) {
             throw new Error(`${this.constructor.name} requires a "mailer" or "emailConfig"`);
         }
-        this.subject = subject;
-        this.emailTemplate = emailTemplate;
-
-        this.from = from || this.fromDefault;
         this.mailer = mailer || new MailerService(emailConfig);
-    }
-
-    getSubject(): string {
-        return this.subject || this.subjectDefault;
-    }
-
-    getEmailTemplate(): EmailTemplateName {
-        return this.emailTemplate || this.emailTemplateDefault;
-    }
-
-    getBaseUrl(): string {
-        return appConfig.server.baseUrl.replace(/\/$/, '');
     }
 
     async sendEmail(user: UserEntity): Promise<TemplateMailResponse> {
@@ -62,9 +35,9 @@ export default abstract class BaseTokenVerifier {
             {
                 to: user.email,
                 from: this.from,
-                subject: this.getSubject(),
+                subject: this.subject,
             },
-            this.getEmailTemplate(),
+            this.emailTemplate,
             replacements,
         );
     }
