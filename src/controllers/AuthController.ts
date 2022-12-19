@@ -7,6 +7,8 @@ import AuthRestrictMiddleware from '@server/middleware/AuthRestrictMiddleware';
 import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 import buildValidationError from '@validation/core/buildValidationError';
 import ProcessRequestForm from '@validation/ProcessRequestForm';
+import EmailForm from '@validation/forms/EmailForm';
+import PasswordResetService from '@services/TokenVerifiers/PasswordResetService';
 
 @Controller('/auth')
 export class AuthController {
@@ -52,11 +54,38 @@ export class AuthController {
         });
     }
 
+    @Post('/email/request/password-reset')
+    async requestPasswordReset(@Request() req: e.Request, @Response() res: e.Response) {
+        return ProcessRequestForm.validate(req, res, EmailForm, async ({ formInstance }) => {
+            const user = await UserEntity.findOneBy({
+                email: formInstance.email,
+                emailConfirmed: true,
+            });
+            if (user) {
+                await PasswordResetService.getInstance().sendEmail(user);
+            }
+            return {
+                status: 200,
+                body: {
+                    status: 'passwordReset',
+                    message: 'password reset email sent',
+                },
+            };
+        });
+    }
+
+    @Get('/email/confirm/password-reset/:confirmationCode')
+    async confirmPasswordReset(@Request() req: e.Request, @Response() res: e.Response) {
+        const { confirmationCode } = req.params;
+        const result = PasswordResetService.getInstance().verifyEmail(confirmationCode);
+        res.status(200).json({ result });
+    }
+
     @Get('/email/confirm/:confirmationCode')
     async confirm(@Request() req: e.Request, @Response() res: e.Response) {
         const { confirmationCode } = req.params;
         const result = EmailConfirmationService.getInstance().verifyEmail(confirmationCode);
-        res.status(200).json({ confirmationCode, result });
+        res.status(200).json({ result });
     }
 
     @All('/status', [AuthRestrictMiddleware])

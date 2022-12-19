@@ -6,7 +6,7 @@ import { UserEntity } from '@entities/UserEntity';
 import { expectBodyToBeValidAuthResponse } from '@testHelpers/expectBodyToBeValidAuthResponse';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
 
-describe('log in', function () {
+describe('e2e:logging in', function () {
     before(async () => await typeormHelper.connect());
     after(async () => await typeormHelper.close());
 

@@ -9,16 +9,8 @@ import sinon from 'sinon';
 import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 import stubs from '@testHelpers/stubs';
 
-describe('registration', function () {
+describe('e2e:registration', function () {
     const sandbox = sinon.createSandbox();
-
-    before(async () => {
-        await typeormHelper.connect();
-    });
-    after(async () => {
-        await typeormHelper.close();
-        sandbox.restore();
-    });
 
     before(async () => await typeormHelper.connect());
     after(async () => {
