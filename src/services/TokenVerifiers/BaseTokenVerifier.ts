@@ -45,12 +45,15 @@ export default abstract class BaseTokenVerifier {
     async verifyEmail(confirmationCode: string) {
         try {
             const { id, email } = jwt.decode(confirmationCode) as { id: string | undefined; email: string | undefined };
-            if (!id || !email) return false;
-            const user = await UserEntity.findOneBy({ id: Number(id), email, emailConfirmed: false });
-            if (!user) return false;
-            jwt.verify(confirmationCode, appConfig.auth.jwtSecret + email);
 
-            return await this.verifyCallback(user);
+            if (!id || !email) throw new Error('Could not get id or email from confirmation code');
+            const user = await UserEntity.findOneBy({ id: Number(id), email });
+
+            if (!user) throw new Error(`could not find user with id:${id} and email:"${email}"`);
+            jwt.verify(confirmationCode, appConfig.auth.jwtSecret + email);
+            const result = await this.verifyCallback(user);
+            if (!result) throw new Error(`verifyCallback returned false for user with id:${id} and email:"${email}"`);
+            return true;
         } catch (error) {
             return false;
         }

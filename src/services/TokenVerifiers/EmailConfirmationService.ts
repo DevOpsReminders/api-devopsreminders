@@ -17,6 +17,7 @@ export default class EmailConfirmationService extends BaseTokenVerifier {
     });
 
     verifyCallback = async (user: UserEntity): Promise<boolean> => {
+        if (user.emailConfirmed) return false;
         user.emailConfirmed = true;
         await user.save();
         return true;

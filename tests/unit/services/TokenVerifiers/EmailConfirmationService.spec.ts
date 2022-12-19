@@ -1,5 +1,4 @@
 import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
-import { AssertTokenVerifier } from '@testHelpers/AssertTokenVerifier';
 import { UserEntity } from '@entities/UserEntity';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -19,7 +18,6 @@ describe('EmailConfirmationService', async function () {
         sandbox.restore();
     });
 
-    await AssertTokenVerifier.assert(EmailConfirmationService);
     describe('EmailConfirmationService::callbacks', () => {
         context(`when data is valid`, () => {
             it('returns false when the user email is already confirmed', async () => {
