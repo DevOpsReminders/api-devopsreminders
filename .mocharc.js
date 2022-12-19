@@ -13,7 +13,6 @@ module.exports = {
     'reporter-option': [], // array, not object
     slow: '75',
     sort: true,
-    spec: ['tests/unit/**/*.spec.ts'], // the positional arguments!
     timeout: '2000', // same as "timeout: '2s'"
     ui: 'bdd',
 };
