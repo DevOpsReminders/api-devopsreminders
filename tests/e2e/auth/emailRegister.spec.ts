@@ -6,19 +6,11 @@ import { IsUniqueInDbErrorMessage } from '@validation/constraints/IsUniqueInDb';
 import { UserEntity } from '@entities/UserEntity';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
 import sinon from 'sinon';
-import EmailConfirmationService from '@services/EmailConfirmationService';
+import EmailConfirmationService from '@services/TokenVerifiers/EmailConfirmationService';
 import stubs from '@testHelpers/stubs';
 
-describe('registration', function () {
+describe('e2e:registration', function () {
     const sandbox = sinon.createSandbox();
-
-    before(async () => {
-        await typeormHelper.connect();
-    });
-    after(async () => {
-        await typeormHelper.close();
-        sandbox.restore();
-    });
 
     before(async () => await typeormHelper.connect());
     after(async () => {
@@ -45,7 +37,6 @@ describe('registration', function () {
 
         context('when the email already exists', () => {
             it('returns email already exists errors', async function () {
-                this.timeout(5000);
                 const factories = await typeormHelper.getFactories();
                 const existingUser = await factories.user.create({});
                 await typeormHelper.expectDataToExistInDb(
@@ -74,7 +65,6 @@ describe('registration', function () {
 
         context('when the data is valid', () => {
             it('creates a user', async function () {
-                this.timeout(5000);
                 sandbox.stub(EmailConfirmationService, 'getInstance').returns(stubs.emailConfirmationService(sandbox));
                 const factories = await typeormHelper.getFactories();
                 const newUser = factories.user.build({});

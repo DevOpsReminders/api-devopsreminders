@@ -6,7 +6,7 @@ import { UserEntity } from '@entities/UserEntity';
 import { expectBodyToBeValidAuthResponse } from '@testHelpers/expectBodyToBeValidAuthResponse';
 import { expectArrayToContainObjectWithProperties } from '@testHelpers/expectArrayToContainObjectWithProperties';
 
-describe('log in', function () {
+describe('e2e:logging in', function () {
     before(async () => await typeormHelper.connect());
     after(async () => await typeormHelper.close());
 
@@ -14,7 +14,6 @@ describe('log in', function () {
     describe(`POST ${uri}`, () => {
         context('when the credentials are valid', () => {
             it('returns user and jwt', async function () {
-                this.timeout(8000);
                 const factories = await typeormHelper.getFactories();
                 const existingUser = await factories.user.build({
                     emailConfirmed: true,
@@ -38,7 +37,6 @@ describe('log in', function () {
 
         context('when the credentials are invalid', () => {
             it('returns an error', async function () {
-                this.timeout(8000);
                 const factories = await typeormHelper.getFactories();
                 const existingUser = await factories.user.build({});
                 const email = existingUser.email;

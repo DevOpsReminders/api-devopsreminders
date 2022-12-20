@@ -1,13 +1,8 @@
 import { Expose } from 'class-transformer';
-import { IsDefined, IsEmail, IsString, Length } from 'class-validator';
+import { IsDefined, IsString, Length } from 'class-validator';
+import EmailForm from '@validation/forms/EmailForm';
 
-export default class UserForm {
-    @Expose()
-    @IsDefined()
-    @IsString()
-    @IsEmail()
-    email!: string;
-
+export default class UserForm extends EmailForm {
     @Expose()
     @IsDefined()
     @IsString()

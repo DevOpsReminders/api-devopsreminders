@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import get from 'lodash/get';
+import appConfig from '@config/index';
 
 export class EnvClass {
     data: NodeJS.Dict<string | number>;
@@ -32,6 +33,10 @@ export class EnvClass {
 
     isTesting() {
         return this.data.NODE_ENV === 'testing';
+    }
+
+    getBaseUrl(): string {
+        return appConfig.server.baseUrl.replace(/\/$/, '');
     }
 }
 
