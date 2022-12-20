@@ -32,8 +32,6 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: yarn test:e2e
-
 workflows:
   test-all:
     jobs:
